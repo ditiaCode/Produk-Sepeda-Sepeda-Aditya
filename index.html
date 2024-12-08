@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Produk Sepeda</title>
+    <link rel="shortcut icon"
+        href="https://raw.githubusercontent.com/ditiaCode/Logo-Produk-Sepeda/refs/heads/main/Logo-modified.png"
+        type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 3px;
+        }
+
+        .product,
+        .cart-item {
+            border: 1px solid #ccc;
+            padding: 4px 0px;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            flex-wrap: wrap;
+        }
+
+        .product button,
+        .cart-item button {
+            margin-left: auto;
+        }
+
+        .cart {
+            margin-top: 15px;
+            margin-bottom: 50px;
+            border-top: 3px solid #000;
+            background-color: #e2e2e5;
+            padding: 20px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            text-shadow: 1px 1px 1px #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .remove-button {
+            background-color: #f44336;
+        }
+
+        .remove-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .total-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+            text-align: right;
+            border-top: 3px solid #000;
+            padding-top: 10px;
+        }
+
+        #total-price {
+            color: red;
+            text-shadow: 1px 1px 1px #000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f4f4f9;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 12px;
+        }
+
+        a {
+            text-decoration: none;
+            text-shadow: 1px 1px 1px #000;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            button {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .total-price {
+                font-size: 16px;
+            }
+        }
+        #product-list {
+            font-size: 11pt;;
+        }
+        body, footer {
+            background-color: darkcyan;
+        }
+        footer {
+            color: #fff;
+            text-shadow: 1px 1px 1px #000;
+        }
+        button:hover {
+            background-color: lime;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Produk Sepeda</h1>
+        <div style="text-align: left; margin-bottom: 8px;">
+            <table>
+                <tr>
+                    <td>Nama</td>
+                    <td><b>:</b></td>
+                    <td><b>Aditya</b></td>
+                </tr>
+                <tr>
+                    <td>NIM</td>
+                    <td><b>:</b></td>
+                    <td><b>221011401567</b></td>
+                </tr>
+                <tr>
+                    <td>Kelas</td>
+                    <td><b>:</b></td>
+                    <td><b>05 TPLM 008</b></td>
+                </tr>
+            </table>
+        </div>
+        <div style="margin-bottom: 8px; display: flex; justify-content: space-between;">
+            <button onclick="displayProducts()">Jumlah <span id="product-count">0</span> Produk</button>
+            <button onclick="addProduct()"><i class="fas fa-plus"></i> Tambah Produk</button>
+            <button onclick="removeProduct()"><i class="fas fa-minus"></i> Hapus Produk</button>
+            <button onclick="updateProduct()"><i class="fas fa-edit"></i> Ubah Produk</button>
+        </div>
+        <div id="product-list"></div>
+        <div class="cart">
+            <h3>Keranjang Belanja</h3>
+            <div id="cart-list"></div>
+            <div class="total-price">Total Harga: <span id="total-price">Rp0</span></div>
+        </div>
+    </div>
+    <footer>
+        &copy; Hak Cipta 2024 <a href="https://necditya.blogspot.com/" target="_blank"><b
+                style="color: red;">Aditya</b></a>
+    </footer>
+
+    <script>
+        const products = [
+            { name: 'Sepeda Gunung', price: 3000000, stock: 5 },
+            { name: 'Sepeda Balap', price: 5000000, stock: 2 },
+            { name: 'Sepeda Lipat', price: 2500000, stock: 1 }
+        ];
+        let cart = [];
+
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
+        }
+
+        function addToCart(productName) {
+            const product = products.find(p => p.name === productName && p.stock > 0);
+            if (product) {
+                product.stock--;
+                cart.push(product);
+                displayCart();
+                displayProducts();
+            }
+        }
+
+        function removeFromCart(productName) {
+            const index = cart.findIndex(p => p.name === productName);
+            if (index !== -1) {
+                const product = products.find(p => p.name === productName);
+                product.stock++;
+                cart.splice(index, 1);
+                displayCart();
+                displayProducts();
+            }
+        }
+
+        function addProduct() {
+            const productName = prompt("Masukkan nama produk:");
+            if (!productName) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+            if (products.some(p => p.name === productName)) {
+                alert("Nama produk sudah ada!");
+                return;
+            }
+            const productPrice = parseInt(prompt("Masukkan harga produk:"));
+            if (!productPrice) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+            const productStock = parseInt(prompt("Masukkan stok produk:"));
+            if (!productStock) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+            const newProduct = { name: productName, price: productPrice, stock: productStock };
+            products.push(newProduct);
+            displayProducts();
+        }
+
+        function removeProduct() {
+            const productName = prompt("Masukkan nama produk yang ingin dihapus:");
+            if (!productName) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+            const productIndex = products.findIndex(p => p.name === productName);
+            if (productIndex !== -1) {
+                products.splice(productIndex, 1);
+                displayProducts();
+            } else {
+                alert("Produk tidak ditemukan!");
+            }
+        }
+
+        function updateProduct() {
+            const productName = prompt("Masukkan nama produk yang ingin diubah:");
+            if (!productName) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+            const product = products.find(p => p.name === productName);
+            if (product) {
+                const newName = prompt("Masukkan nama baru produk:");
+                if (!newName) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+                const newPrice = parseInt(prompt("Masukkan harga baru produk:"));
+                if (!newPrice) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+                const newStock = parseInt(prompt("Masukkan stok baru produk:"));
+                if (!newStock) return; // Menambahkan pengecekan jika pengguna membatalkan prompt
+                product.name = newName;
+                product.price = newPrice;
+                product.stock = newStock;
+                displayProducts();
+            } else {
+                alert("Produk tidak ditemukan!");
+            }
+        }
+
+        function displayProducts() {
+            const productList = document.getElementById('product-list');
+            const productCount = document.getElementById('product-count');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `${product.name} - ${formatRupiah(product.price)} - Stok: ${product.stock > 0 ? product.stock : 'Habis'} ${product.stock > 0 ? `<button onclick="addToCart('${product.name}')"><i class="fas fa-cart-plus"></i></button>` : ''}`;
+                productList.appendChild(productDiv);
+            });
+            productCount.textContent = products.length;
+        }
+
+        function displayCart() {
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+            cart.forEach(product => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `${product.name} - ${formatRupiah(product.price)} <button class='remove-button' onclick="removeFromCart('${product.name}')"><i class='fas fa-trash'></i></button>`;
+                cartList.appendChild(cartItem);
+            });
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const total = cart.reduce((acc, product) => acc + product.price, 0);
+            document.getElementById('total-price').textContent = formatRupiah(total);
+        }
+
+        displayProducts();
+    </script>
+</body>
+
+</html>
